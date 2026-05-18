@@ -76,7 +76,6 @@ public class StudentForm extends JFrame implements ActionListener {
         btnClear.addActionListener(this);
         add(btnClear);
 
-        // LOGOUT BUTTON FIXED
         btnLogout = new JButton("Logout");
         btnLogout.setBounds(400, 20, 100, 30);
 
@@ -165,13 +164,13 @@ public class StudentForm extends JFrame implements ActionListener {
     }
 
     public void addStudent() {
-        /* unchanged */ }
+    }
 
     public void updateStudent() {
-        /* unchanged */ }
+    }
 
     public void deleteStudent() {
-        /* unchanged */ }
+    }
 
     public void clearFields() {
         txtId.setText("");
