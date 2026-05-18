@@ -1,0 +1,15 @@
+*.class
+.idea/
+.vscode/
+*.iml
+*.classpath
+*.project
+.settings/
+out/
+bin/
+target/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.temp
