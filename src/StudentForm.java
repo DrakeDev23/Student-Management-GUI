@@ -1,41 +1,214 @@
 import javax.swing.*;
-import java.awt.event.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
 
 public class StudentForm extends JFrame implements ActionListener {
 
-    JLabel lblName;
-    JTextField txtName;
-    JButton btnAdd;
+    JTextField txtName, txtCourse, txtYear, txtId;
+    JButton btnAdd, btnUpdate, btnDelete, btnClear;
+    JTable table;
+    DefaultTableModel model;
+
+    Connection conn;
 
     public StudentForm() {
 
-        setTitle("Student Management");
-        setSize(400, 300);
+        conn = DBConnection.getConnection();
+
+        setTitle("Student CRUD System");
+        setSize(700, 450);
+        setLayout(null);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
 
-        lblName = new JLabel("Full Name:");
-        lblName.setBounds(30, 50, 100, 30);
+        JLabel lblId = new JLabel("ID:");
+        lblId.setBounds(20, 20, 80, 25);
+        add(lblId);
+
+        txtId = new JTextField();
+        txtId.setBounds(100, 20, 150, 25);
+        txtId.setEditable(false);
+        add(txtId);
+
+        JLabel lblName = new JLabel("Name:");
+        lblName.setBounds(20, 60, 80, 25);
         add(lblName);
 
         txtName = new JTextField();
-        txtName.setBounds(120, 50, 200, 30);
+        txtName.setBounds(100, 60, 150, 25);
         add(txtName);
 
+        JLabel lblCourse = new JLabel("Course:");
+        lblCourse.setBounds(20, 100, 80, 25);
+        add(lblCourse);
+
+        txtCourse = new JTextField();
+        txtCourse.setBounds(100, 100, 150, 25);
+        add(txtCourse);
+
+        JLabel lblYear = new JLabel("Year:");
+        lblYear.setBounds(20, 140, 80, 25);
+        add(lblYear);
+
+        txtYear = new JTextField();
+        txtYear.setBounds(100, 140, 150, 25);
+        add(txtYear);
+
         btnAdd = new JButton("Add");
-        btnAdd.setBounds(120, 120, 100, 35);
+        btnAdd.setBounds(280, 20, 100, 30);
         btnAdd.addActionListener(this);
         add(btnAdd);
+
+        btnUpdate = new JButton("Update");
+        btnUpdate.setBounds(280, 60, 100, 30);
+        btnUpdate.addActionListener(this);
+        add(btnUpdate);
+
+        btnDelete = new JButton("Delete");
+        btnDelete.setBounds(280, 100, 100, 30);
+        btnDelete.addActionListener(this);
+        add(btnDelete);
+
+        btnClear = new JButton("Clear");
+        btnClear.setBounds(280, 140, 100, 30);
+        btnClear.addActionListener(this);
+        add(btnClear);
+
+        model = new DefaultTableModel();
+        table = new JTable(model);
+
+        model.addColumn("ID");
+        model.addColumn("Name");
+        model.addColumn("Course");
+        model.addColumn("Year");
+
+        JScrollPane sp = new JScrollPane(table);
+        sp.setBounds(20, 200, 640, 200);
+        add(sp);
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int row = table.getSelectedRow();
+
+                txtId.setText(model.getValueAt(row, 0).toString());
+                txtName.setText(model.getValueAt(row, 1).toString());
+                txtCourse.setText(model.getValueAt(row, 2).toString());
+                txtYear.setText(model.getValueAt(row, 3).toString());
+            }
+        });
+
+        loadData();
+
+        setVisible(true);
     }
 
-    @Override
+    // LOAD DATA
+    public void loadData() {
+
+        try {
+            model.setRowCount(0);
+
+            String sql = "SELECT * FROM students";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[] {
+                        rs.getInt("id"),
+                        rs.getString("fullname"),
+                        rs.getString("course"),
+                        rs.getString("year_level")
+                });
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ACTIONS
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == btnAdd) {
-            JOptionPane.showMessageDialog(this,
-                    "Student: " + txtName.getText());
+            addStudent();
+        } else if (e.getSource() == btnUpdate) {
+            updateStudent();
+        } else if (e.getSource() == btnDelete) {
+            deleteStudent();
+        } else if (e.getSource() == btnClear) {
+            clearFields();
         }
+    }
+
+    // ADD
+    public void addStudent() {
+        try {
+            String sql = "INSERT INTO students(fullname, course, year_level) VALUES (?, ?, ?)";
+
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, txtName.getText());
+            pst.setString(2, txtCourse.getText());
+            pst.setString(3, txtYear.getText());
+
+            pst.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Student Added!");
+            loadData();
+            clearFields();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // UPDATE
+    public void updateStudent() {
+        try {
+            String sql = "UPDATE students SET fullname=?, course=?, year_level=? WHERE id=?";
+
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, txtName.getText());
+            pst.setString(2, txtCourse.getText());
+            pst.setString(3, txtYear.getText());
+            pst.setInt(4, Integer.parseInt(txtId.getText()));
+
+            pst.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Student Updated!");
+            loadData();
+            clearFields();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // DELETE
+    public void deleteStudent() {
+        try {
+            String sql = "DELETE FROM students WHERE id=?";
+
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setInt(1, Integer.parseInt(txtId.getText()));
+
+            pst.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Student Deleted!");
+            loadData();
+            clearFields();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // CLEAR
+    public void clearFields() {
+        txtId.setText("");
+        txtName.setText("");
+        txtCourse.setText("");
+        txtYear.setText("");
     }
 }

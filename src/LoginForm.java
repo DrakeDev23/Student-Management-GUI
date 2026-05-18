@@ -19,8 +19,8 @@ public class LoginForm extends JFrame implements ActionListener {
         setLayout(null);
 
         lblTitle = new JLabel("Student Record System");
-        lblTitle.setBounds(90, 20, 250, 30);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        lblTitle.setBounds(80, 20, 300, 30);
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 18));
         add(lblTitle);
 
         lblUsername = new JLabel("Username:");
@@ -43,6 +43,8 @@ public class LoginForm extends JFrame implements ActionListener {
         btnLogin.setBounds(150, 190, 100, 35);
         btnLogin.addActionListener(this);
         add(btnLogin);
+
+        setVisible(true);
     }
 
     @Override
@@ -51,20 +53,23 @@ public class LoginForm extends JFrame implements ActionListener {
         try {
             Connection conn = DBConnection.getConnection();
 
-            String sql = "SELECT * FROM users WHERE username=? AND password=?";
+            if (conn == null) {
+                JOptionPane.showMessageDialog(this, "Database Connection Failed!");
+                return;
+            }
 
+            String sql = "SELECT * FROM users WHERE username=? AND password=?";
             PreparedStatement pst = conn.prepareStatement(sql);
 
             pst.setString(1, txtUsername.getText());
-            pst.setString(2, txtPassword.getText());
+            pst.setString(2, new String(txtPassword.getPassword()));
 
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
+                JOptionPane.showMessageDialog(this, "Login Successful!");
 
-                JOptionPane.showMessageDialog(this, "Login Successful");
-
-                new Dashboard().setVisible(true);
+                new StudentForm().setVisible(true);
                 dispose();
 
             } else {
@@ -72,7 +77,12 @@ public class LoginForm extends JFrame implements ActionListener {
             }
 
         } catch (Exception ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
+    }
+
+    public static void main(String[] args) {
+        new LoginForm();
     }
 }

@@ -1,26 +1,34 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBConnection {
 
     public static Connection getConnection() {
 
-        Connection conn = null;
-
         try {
+            // Load JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            conn = DriverManager.getConnection(
+            // Connect to MariaDB/MySQL
+            return DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/student_system",
-                    "root",
-                    "");
+                    "javauser",
+                    "1234");
 
-            System.out.println("Database Connected");
+        } catch (ClassNotFoundException e) {
+            System.out.println("MySQL Driver not found!");
+            e.printStackTrace();
+
+        } catch (SQLException e) {
+            System.out.println("Database connection failed!");
+            e.printStackTrace();
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("UNKNOWN ERROR");
+            e.printStackTrace();
         }
 
-        return conn;
+        return null;
     }
 }
