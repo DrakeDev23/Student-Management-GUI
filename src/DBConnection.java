@@ -7,10 +7,8 @@ public class DBConnection {
     public static Connection getConnection() {
 
         try {
-            // Load JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Connect to MariaDB/MySQL
             return DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/student_system",
                     "javauser",

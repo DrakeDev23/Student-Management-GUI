@@ -69,8 +69,11 @@ public class LoginForm extends JFrame implements ActionListener {
             if (rs.next()) {
                 JOptionPane.showMessageDialog(this, "Login Successful!");
 
-                new StudentForm().setVisible(true);
                 dispose();
+
+                SwingUtilities.invokeLater(() -> {
+                    new Dashboard().setVisible(true);
+                });
 
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid Username or Password");

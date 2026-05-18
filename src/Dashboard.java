@@ -16,12 +16,34 @@ public class Dashboard extends JFrame {
         add(lbl);
 
         JButton btnStudents = new JButton("Open Student Management");
-
         btnStudents.addActionListener(e -> {
             new StudentForm().setVisible(true);
         });
-
         add(btnStudents);
+
+        JButton btnLogout = new JButton("Logout");
+
+        btnLogout.addActionListener(e -> {
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to logout?",
+                    "Logout",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+
+                dispose();
+
+                SwingUtilities.invokeLater(() -> {
+                    LoginForm login = new LoginForm();
+                    login.setVisible(true);
+                    login.setLocationRelativeTo(null);
+                });
+            }
+        });
+
+        add(btnLogout);
 
         setVisible(true);
     }
