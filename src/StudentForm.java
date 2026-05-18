@@ -104,7 +104,6 @@ public class StudentForm extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    // LOAD DATA
     public void loadData() {
 
         try {
@@ -128,7 +127,6 @@ public class StudentForm extends JFrame implements ActionListener {
         }
     }
 
-    // ACTIONS
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == btnAdd) {
@@ -142,7 +140,6 @@ public class StudentForm extends JFrame implements ActionListener {
         }
     }
 
-    // ADD
     public void addStudent() {
         try {
             String sql = "INSERT INTO students(fullname, course, year_level) VALUES (?, ?, ?)";
@@ -163,7 +160,6 @@ public class StudentForm extends JFrame implements ActionListener {
         }
     }
 
-    // UPDATE
     public void updateStudent() {
         try {
             String sql = "UPDATE students SET fullname=?, course=?, year_level=? WHERE id=?";
@@ -185,7 +181,6 @@ public class StudentForm extends JFrame implements ActionListener {
         }
     }
 
-    // DELETE
     public void deleteStudent() {
         try {
             String sql = "DELETE FROM students WHERE id=?";
@@ -204,7 +199,6 @@ public class StudentForm extends JFrame implements ActionListener {
         }
     }
 
-    // CLEAR
     public void clearFields() {
         txtId.setText("");
         txtName.setText("");
